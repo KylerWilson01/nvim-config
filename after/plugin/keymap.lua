@@ -12,6 +12,8 @@ nnoremap('<leader>e', ':Ex<CR>')
 inoremap('<c-c>', '<c-[>')
 
 nnoremap('<leader>yt', '<cmd>!yarn test<CR>')
+nnoremap('<leader>gtf', '<cmd>!go test %:p:h<CR>')
+nnoremap('<leader>gta', '<cmd>!go test ./...<CR>')
 
 nnoremap('<leader>y', '"+y')
 vnoremap('<leader>y', '"+y')
