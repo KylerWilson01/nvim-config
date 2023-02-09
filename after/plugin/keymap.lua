@@ -11,6 +11,8 @@ nnoremap('<c-u>', '<c-u>zzzv')
 nnoremap('<leader>e', ':Ex<CR>')
 inoremap('<c-c>', '<c-[>')
 
+nnoremap('<leader>yt', '<cmd>!yarn test<CR>')
+
 nnoremap('<leader>y', '"+y')
 vnoremap('<leader>y', '"+y')
 nnoremap('<leader><CR>', ':so ~/.config/nvim/init.vim<CR>')

@@ -1,4 +1,4 @@
-lua require'rose-pine'.setup({dark_variant='main',disable_background = true})
+lua require'rose-pine'.setup({disable_italics=true,dark_variant='main',disable_background = true})
 colorscheme rose-pine
 
 highlight ColorColumn ctermbg=0 guibg=grey
