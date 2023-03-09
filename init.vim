@@ -3,13 +3,12 @@ set wildignore+=*_build/*
 set wildignore+=**/node_modules/*
 set wildignore+=**/.git/*
 
-call plug#begin("~/.local/share/nvim/site/autoload")
+call plug#begin("~/AppData/Local/nvim-data")
 
 Plug 'rose-pine/neovim'
 Plug 'folke/todo-comments.nvim'
 
 Plug 'sbdchd/neoformat'
-Plug 'TimUntersberger/neogit'
 
 Plug 'ThePrimeagen/refactoring.nvim'
 
@@ -56,5 +55,17 @@ augroup SyntaxSettings
     autocmd BufNewFile,BufRead *.scss set filetype=scss
     autocmd BufWritePre * Neoformat
 augroup END
+
+if has("win32")
+ let &shell='bash.exe'
+ let &shellcmdflag = '-c'
+ let &shellredir = '>%s 2>&1'
+ set shellquote= shellxescape=
+ " set noshelltemp
+ set shellxquote=
+ let &shellpipe='2>&1| tee'
+ let $TMP="/tmp"
+ let $TEMP="/tmp"
+endif
 
 let mapleader = ' ' 
