@@ -33,6 +33,7 @@ require('lazy').setup({
 
   'nvim-lua/popup.nvim',
   'nvim-treesitter/nvim-treesitter-context',
+  'mattn/efm-langserver',
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
@@ -45,7 +46,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -73,7 +74,7 @@ require('lazy').setup({
   'hrsh7th/cmp-nvim-lsp',
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -87,7 +88,8 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
+        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
+          { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
         vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
         vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
         vim.cmd [[hi GitSignsAdd guibg=NONE]]
@@ -141,6 +143,12 @@ require('lazy').setup({
       vim.cmd [[hi ColorColumn ctermbg=0 guibg=grey]]
       vim.cmd [[hi SignColumn guibg=none]]
     end,
+  },
+
+  {
+    'creativenull/efmls-configs-nvim',
+    version = 'v1.x.x', -- version is optional, but recommended
+    dependencies = { 'neovim/nvim-lspconfig' },
   },
 
   {
@@ -204,9 +212,9 @@ require('lazy').setup({
   { 'christoomey/vim-tmux-navigator' },
   {
     'ThePrimeagen/harpoon',
-    dependencies = { 
-      'nvim-lua/plenary.nvim', 
-    }, 
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
   },
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
@@ -273,11 +281,25 @@ vim.o.scrolloff = 8
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+
 vim.keymap.set('n', '<C-h>', '<cmd> TmuxNavigateLeft<CR>', { silent = true })
 vim.keymap.set('n', '<C-l>', '<cmd> TmuxNavigateRight<CR>', { silent = true })
 vim.keymap.set('n', '<C-j>', '<cmd> TmuxNavigateDown<CR>', { silent = true })
 vim.keymap.set('n', '<C-k>', '<cmd> TmuxNavigateUp<CR>', { silent = true })
+
 vim.keymap.set('n', '<leader>gs', vim.cmd.Git, { silent = true })
+
+vim.keymap.set('n', '<leader>ha', require 'harpoon.mark'.add_file, { silent = true, desc = '[H]arpoon mark [A]dd file' })
+vim.keymap.set('n', '<leader>hm', require 'harpoon.ui'.toggle_quick_menu,
+  { silent = true, desc = '[H]arpoon toggle [M]enue' })
+vim.keymap.set('n', '<leader>hh', function() require 'harpoon.ui'.nav_file(1) end,
+  { silent = true, desc = '[H]arpoon first file' })
+vim.keymap.set('n', '<leader>ht', function() require 'harpoon.ui'.nav_file(2) end,
+  { silent = true, desc = '[H]arpoon second file' })
+vim.keymap.set('n', '<leader>hn', function() require 'harpoon.ui'.nav_file(3) end,
+  { silent = true, desc = '[H]arpoon third file' })
+vim.keymap.set('n', '<leader>hs', function() require 'harpoon.ui'.nav_file(4) end,
+  { silent = true, desc = '[H]arpoon fourth file' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -459,6 +481,66 @@ end
 --
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
+--
+local async_formatting = function(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+
+  vim.lsp.buf_request(
+    bufnr,
+    "textDocument/formatting",
+    vim.lsp.util.make_formatting_params({}),
+    function(err, res, ctx)
+      if err then
+        local err_msg = type(err) == "string" and err or err.message
+        -- you can modify the log message / level (or ignore it completely)
+        vim.notify("formatting: " .. err_msg, vim.log.levels.WARN)
+        return
+      end
+
+      -- don't apply results if buffer is unloaded or has been modified
+      if not vim.api.nvim_buf_is_loaded(bufnr) or vim.api.nvim_buf_get_option(bufnr, "modified") then
+        return
+      end
+
+      if res then
+        local client = vim.lsp.get_client_by_id(ctx.client_id)
+        vim.lsp.util.apply_text_edits(res, bufnr, client and client.offset_encoding or "utf-16")
+        vim.api.nvim_buf_call(bufnr, function()
+          vim.cmd("silent noautocmd update")
+        end)
+      end
+    end
+  )
+end
+
+local languages = {
+  typescriptreact = {
+    require('efmls-configs.linters.eslint_d'),
+    require('efmls-configs.formatters.prettier'),
+  },
+  typescript = {
+    require('efmls-configs.linters.eslint_d'),
+    require('efmls-configs.formatters.prettier'),
+  },
+  lua = {
+    require('efmls-configs.formatters.stylua'),
+  },
+}
+
+local efmls_config = {
+  filetypes = vim.tbl_keys(languages),
+  settings = {
+    rootMarkers = { '.git/' },
+    languages = languages,
+  },
+  init_options = {
+    documentFormatting = true,
+    documentRangeFormatting = true,
+  },
+}
+
+local LspAuGroup = vim.api.nvim_create_augroup("LspFormatting", {})
+
 local servers = {
   gopls = {
     settings = {
@@ -509,6 +591,23 @@ mason_lspconfig.setup_handlers {
   end
 }
 
+require('lspconfig').efm.setup(vim.tbl_extend('force', efmls_config, {
+  capabilities = capabilities,
+  on_attach = function(client, bufnr)
+    if client.supports_method("textDocument/formatting") then
+      vim.api.nvim_clear_autocmds({ group = LspAuGroup, buffer = bufnr })
+      vim.api.nvim_create_autocmd("BufWritePost", {
+        group = LspAuGroup,
+        buffer = bufnr,
+        callback = function()
+          async_formatting(bufnr)
+        end,
+      })
+    end
+    on_attach(client, bufnr)
+  end,
+}))
+
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require 'cmp'
@@ -557,29 +656,29 @@ cmp.setup {
 
 -- Set configuration for specific filetype.
 cmp.setup.filetype('gitcommit', {
-    sources = cmp.config.sources({
-        { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
-    }, {
-        { name = 'buffer' },
-    })
+  sources = cmp.config.sources({
+    { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+  }, {
+    { name = 'buffer' },
+  })
 })
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline('/', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = {
-        { name = 'buffer' }
-    }
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
 })
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources({
-        { name = 'path' }
-    }, {
-        { name = 'cmdline' }
-    })
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
