@@ -162,6 +162,28 @@ require('lazy').setup({
         component_separators = '|',
         section_separators = '',
       },
+      sections = {
+        lualine_a = {
+          { 'mode', separator = { left = '' }, right_padding = 2 },
+        },
+        lualine_b = { 'filename' },
+        lualine_c = {},
+        lualine_x = {},
+
+        lualine_y = { 'branch' },
+        lualine_z = {
+          { 'location', separator = { right = '' }, left_padding = 2 },
+        },
+      },
+      inactive_sections = {
+        lualine_a = { 'filename' },
+        lualine_b = {},
+        lualine_c = {},
+
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = { 'location' },
+      },
     },
   },
 
@@ -316,12 +338,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
-    mappings = {
-      i = {
-        ['<C-u>'] = false,
-        ['<C-d>'] = false,
-      },
-    },
+    file_ignore_patterns = { "node_modules" }
   },
   pickers = {
     git_files = {
@@ -359,6 +376,9 @@ vim.keymap.set('n', '<leader>tsd', require('telescope.builtin').diagnostics, { d
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
+  modules = {},
+  sync_install = false,
+  ignore_install = {},
   -- Add languages to be installed here that you want installed for treesitter
   ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'tsx', 'typescript', 'vimdoc', 'vim' },
 
