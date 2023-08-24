@@ -125,7 +125,7 @@ require('lazy').setup({
           -- Blend colours against the "base" background
           CursorLine = { bg = 'foam', blend = 10 },
           StatusLine = { fg = 'subtle', bg = 'subtle', blend = 10 },
-        }
+        },
       }
       vim.o.termguicolors = true
       vim.cmd.colorscheme 'rose-pine'
@@ -254,50 +254,6 @@ require('lazy').setup({
   -- { import = 'custom.plugins' },
 }, {})
 
--- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
-
--- Set highlight on search
-vim.o.hlsearch = false
-
--- Make line numbers default
-vim.wo.number = true
-
--- Enable mouse mode
-vim.o.mouse = 'a'
-
--- Sync clipboard between OS and Neovim.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
-vim.o.clipboard = 'unnamedplus'
-
--- Enable break indent
-vim.o.breakindent = true
-
--- Save undo history
-vim.o.undofile = true
-
--- Case-insensitive searching UNLESS \C or capital in search
-vim.o.ignorecase = true
-vim.o.smartcase = true
-
--- Keep signcolumn on by default
-vim.wo.signcolumn = 'yes'
-
--- Decrease update time
-vim.o.updatetime = 250
-vim.o.timeoutlen = 300
-
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
-
--- NOTE: You should make sure your terminal supports this
-vim.o.termguicolors = true
-
-vim.o.wrap = false
-vim.o.scrolloff = 8
-
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
@@ -311,17 +267,21 @@ vim.keymap.set('n', '<C-k>', '<cmd> TmuxNavigateUp<CR>', { silent = true })
 
 vim.keymap.set('n', '<leader>gs', vim.cmd.Git, { silent = true })
 
-vim.keymap.set('n', '<leader>ha', require 'harpoon.mark'.add_file, { silent = true, desc = '[H]arpoon mark [A]dd file' })
-vim.keymap.set('n', '<leader>hm', require 'harpoon.ui'.toggle_quick_menu,
+vim.keymap.set('n', '<leader>ha', require('harpoon.mark').add_file, { silent = true, desc = '[H]arpoon mark [A]dd file' })
+vim.keymap.set('n', '<leader>hm', require('harpoon.ui').toggle_quick_menu,
   { silent = true, desc = '[H]arpoon toggle [M]enue' })
-vim.keymap.set('n', '<leader>hh', function() require 'harpoon.ui'.nav_file(1) end,
-  { silent = true, desc = '[H]arpoon first file' })
-vim.keymap.set('n', '<leader>ht', function() require 'harpoon.ui'.nav_file(2) end,
-  { silent = true, desc = '[H]arpoon second file' })
-vim.keymap.set('n', '<leader>hn', function() require 'harpoon.ui'.nav_file(3) end,
-  { silent = true, desc = '[H]arpoon third file' })
-vim.keymap.set('n', '<leader>hs', function() require 'harpoon.ui'.nav_file(4) end,
-  { silent = true, desc = '[H]arpoon fourth file' })
+vim.keymap.set('n', '<leader>hh', function()
+  require('harpoon.ui').nav_file(1)
+end, { silent = true, desc = '[H]arpoon first file' })
+vim.keymap.set('n', '<leader>ht', function()
+  require('harpoon.ui').nav_file(2)
+end, { silent = true, desc = '[H]arpoon second file' })
+vim.keymap.set('n', '<leader>hn', function()
+  require('harpoon.ui').nav_file(3)
+end, { silent = true, desc = '[H]arpoon third file' })
+vim.keymap.set('n', '<leader>hs', function()
+  require('harpoon.ui').nav_file(4)
+end, { silent = true, desc = '[H]arpoon fourth file' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -338,7 +298,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
-    file_ignore_patterns = { "node_modules" }
+    file_ignore_patterns = { 'node_modules' },
   },
   pickers = {
     git_files = {
@@ -349,7 +309,7 @@ require('telescope').setup {
     },
     buffers = {
       theme = 'dropdown',
-    }
+    },
   },
 }
 
@@ -502,65 +462,6 @@ end
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 --
-local async_formatting = function(bufnr)
-  bufnr = bufnr or vim.api.nvim_get_current_buf()
-
-  vim.lsp.buf_request(
-    bufnr,
-    "textDocument/formatting",
-    vim.lsp.util.make_formatting_params({}),
-    function(err, res, ctx)
-      if err then
-        local err_msg = type(err) == "string" and err or err.message
-        -- you can modify the log message / level (or ignore it completely)
-        vim.notify("formatting: " .. err_msg, vim.log.levels.WARN)
-        return
-      end
-
-      -- don't apply results if buffer is unloaded or has been modified
-      if not vim.api.nvim_buf_is_loaded(bufnr) or vim.api.nvim_buf_get_option(bufnr, "modified") then
-        return
-      end
-
-      if res then
-        local client = vim.lsp.get_client_by_id(ctx.client_id)
-        vim.lsp.util.apply_text_edits(res, bufnr, client and client.offset_encoding or "utf-16")
-        vim.api.nvim_buf_call(bufnr, function()
-          vim.cmd("silent noautocmd update")
-        end)
-      end
-    end
-  )
-end
-
-local languages = {
-  typescriptreact = {
-    require('efmls-configs.linters.eslint_d'),
-    require('efmls-configs.formatters.prettier'),
-  },
-  typescript = {
-    require('efmls-configs.linters.eslint_d'),
-    require('efmls-configs.formatters.prettier'),
-  },
-  lua = {
-    require('efmls-configs.formatters.stylua'),
-  },
-}
-
-local efmls_config = {
-  filetypes = vim.tbl_keys(languages),
-  settings = {
-    rootMarkers = { '.git/' },
-    languages = languages,
-  },
-  init_options = {
-    documentFormatting = true,
-    documentRangeFormatting = true,
-  },
-}
-
-local LspAuGroup = vim.api.nvim_create_augroup("LspFormatting", {})
-
 local servers = {
   gopls = {
     settings = {
@@ -608,25 +509,11 @@ mason_lspconfig.setup_handlers {
       settings = servers[server_name],
       filetypes = (servers[server_name] or {}).filetypes,
     }
-  end
+  end,
 }
 
-require('lspconfig').efm.setup(vim.tbl_extend('force', efmls_config, {
-  capabilities = capabilities,
-  on_attach = function(client, bufnr)
-    if client.supports_method("textDocument/formatting") then
-      vim.api.nvim_clear_autocmds({ group = LspAuGroup, buffer = bufnr })
-      vim.api.nvim_create_autocmd("BufWritePost", {
-        group = LspAuGroup,
-        buffer = bufnr,
-        callback = function()
-          async_formatting(bufnr)
-        end,
-      })
-    end
-    on_attach(client, bufnr)
-  end,
-}))
+-- Setup efm
+require 'kickstart.plugins.autoformat'
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
@@ -680,26 +567,28 @@ cmp.setup.filetype('gitcommit', {
     { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
   }, {
     { name = 'buffer' },
-  })
+  }),
 })
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline('/', {
   mapping = cmp.mapping.preset.cmdline(),
   sources = {
-    { name = 'buffer' }
-  }
+    { name = 'buffer' },
+  },
 })
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
   mapping = cmp.mapping.preset.cmdline(),
   sources = cmp.config.sources({
-    { name = 'path' }
+    { name = 'path' },
   }, {
-    { name = 'cmdline' }
-  })
+    { name = 'cmdline' },
+  }),
 })
 
+-- The line beneath this is called `modeline`. See `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
