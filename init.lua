@@ -36,6 +36,8 @@ require('lazy').setup({
   'mattn/efm-langserver',
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
+  { 'codota/tabnine-nvim',  build = "./dl_binaries.sh" },
+
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
@@ -74,7 +76,7 @@ require('lazy').setup({
   'hrsh7th/cmp-nvim-lsp',
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
+  { 'folke/which-key.nvim', opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -199,7 +201,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',         opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -452,6 +454,17 @@ local on_attach = function(_, bufnr)
     vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
 end
+
+require('tabnine').setup({
+  disable_auto_comment = true,
+  accept_keymap = "<C-t>",
+  dismiss_keymap = "<C-]>",
+
+  debounce_ms = 800,
+
+  exclude_filetypes = { "TelescopePrompt" },
+  log_file_path = nil, -- absolute path to Tabnine log file
+})
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
