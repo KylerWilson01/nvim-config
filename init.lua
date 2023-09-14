@@ -55,138 +55,13 @@ require('lazy').setup({
     },
   },
 
-  {
-    -- Autocompletion
-    'hrsh7th/nvim-cmp',
-    dependencies = {
-      -- Snippet Engine & its associated nvim-cmp source
-      'L3MON4D3/LuaSnip',
-      'saadparwaiz1/cmp_luasnip',
-
-      -- Adds LSP completion capabilities
-      'hrsh7th/cmp-nvim-lsp',
-
-      -- Adds a number of user-friendly snippets
-      'rafamadriz/friendly-snippets',
-    },
-  },
-  'hrsh7th/cmp-buffer',
-  'hrsh7th/cmp-path',
-  'hrsh7th/cmp-cmdline',
-  'hrsh7th/cmp-nvim-lsp',
-
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
-  {
-    -- Adds git related signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      -- See `:help gitsigns.txt`
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-      on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
-          { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
-        vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
-        vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
-        vim.cmd [[hi GitSignsAdd guibg=NONE]]
-        vim.cmd [[hi GitSignsChange guibg=NONE]]
-        vim.cmd [[hi GitSignsDelete guibg=NONE]]
-      end,
-    },
-  },
-
-  {
-    'rose-pine/neovim',
-    name = 'rose-pine',
-    config = function()
-      require('rose-pine').setup {
-        variant = 'main',
-        dark_variant = 'main',
-        bold_vert_split = false,
-        dim_nc_background = true,
-        disable_background = true,
-        disable_float_background = false,
-        disable_italics = true,
-
-        groups = {
-          background = 'base',
-          background_nc = '_experimental_nc',
-          panel = 'surface',
-          panel_nc = 'base',
-        },
-
-        highlight_groups = {
-          ColorColumn = { bg = 'iris' },
-
-          -- Blend colours against the "base" background
-          CursorLine = { bg = 'foam', blend = 10 },
-          StatusLine = { fg = 'subtle', bg = 'subtle', blend = 10 },
-        },
-      }
-      vim.o.termguicolors = true
-      vim.cmd.colorscheme 'rose-pine'
-
-      vim.cmd [[
-      hi Normal guibg=NONE ctermbg=NONE
-      hi NonText guibg=NONE ctermbg=NONE
-      hi EndOfBuffer guibg=NONE ctermbg=NONE
-      hi NormalNC guibg=NONE ctermbg=NONE
-      ]]
-      vim.cmd [[hi LineNr guifg=#5eacd3]]
-      vim.cmd [[hi netrwDir guifg=#5eacd3]]
-      vim.cmd [[hi qfFileName guifg=#aed75f]]
-      vim.cmd [[hi TelescopeBorder guifg=#5eacd]]
-      vim.cmd [[hi ColorColumn ctermbg=0 guibg=grey]]
-      vim.cmd [[hi SignColumn guibg=none]]
-    end,
-  },
+  { 'folke/which-key.nvim',  opts = {} },
 
   {
     'creativenull/efmls-configs-nvim',
     version = 'v1.x.x', -- version is optional, but recommended
     dependencies = { 'neovim/nvim-lspconfig' },
-  },
-
-  {
-    -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
-    -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'rose-pine',
-        component_separators = '|',
-        section_separators = '',
-      },
-      sections = {
-        lualine_a = {
-          { 'mode', separator = { left = '' }, right_padding = 2 },
-        },
-        lualine_b = { 'filename' },
-        lualine_c = {},
-        lualine_x = {},
-
-        lualine_y = { 'branch' },
-        lualine_z = {
-          { 'location', separator = { right = '' }, left_padding = 2 },
-        },
-      },
-      inactive_sections = {
-        lualine_a = { 'filename' },
-        lualine_b = {},
-        lualine_c = {},
-
-        lualine_x = {},
-        lualine_y = {},
-        lualine_z = { 'location' },
-      },
-    },
   },
 
   {
@@ -204,25 +79,6 @@ require('lazy').setup({
   { 'numToStr/Comment.nvim',         opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
-  {
-    'nvim-telescope/telescope.nvim',
-    branch = '0.1.x',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      -- Fuzzy Finder Algorithm which requires local dependencies to be built.
-      -- Only load if `make` is available. Make sure you have the system
-      -- requirements installed.
-      {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        -- NOTE: If you are having trouble with this installation,
-        --       refer to the README for telescope-fzf-native for more instructions.
-        build = 'make',
-        cond = function()
-          return vim.fn.executable 'make' == 1
-        end,
-      },
-    },
-  },
 
   {
     -- Highlight, edit, and navigate code
@@ -234,12 +90,6 @@ require('lazy').setup({
   },
   { 'nvim-treesitter/playground' },
   { 'christoomey/vim-tmux-navigator' },
-  {
-    'ThePrimeagen/harpoon',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-    },
-  },
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -253,37 +103,8 @@ require('lazy').setup({
   --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {})
-
--- [[ Basic Keymaps ]]
-
--- Keymaps for better default experience
--- See `:help vim.keymap.set()`
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-
-vim.keymap.set('n', '<C-h>', '<cmd> TmuxNavigateLeft<CR>', { silent = true })
-vim.keymap.set('n', '<C-l>', '<cmd> TmuxNavigateRight<CR>', { silent = true })
-vim.keymap.set('n', '<C-j>', '<cmd> TmuxNavigateDown<CR>', { silent = true })
-vim.keymap.set('n', '<C-k>', '<cmd> TmuxNavigateUp<CR>', { silent = true })
-
-vim.keymap.set('n', '<leader>gs', vim.cmd.Git, { silent = true })
-
-vim.keymap.set('n', '<leader>ha', require('harpoon.mark').add_file, { silent = true, desc = '[H]arpoon mark [A]dd file' })
-vim.keymap.set('n', '<leader>hm', require('harpoon.ui').toggle_quick_menu,
-  { silent = true, desc = '[H]arpoon toggle [M]enue' })
-vim.keymap.set('n', '<leader>hh', function()
-  require('harpoon.ui').nav_file(1)
-end, { silent = true, desc = '[H]arpoon first file' })
-vim.keymap.set('n', '<leader>ht', function()
-  require('harpoon.ui').nav_file(2)
-end, { silent = true, desc = '[H]arpoon second file' })
-vim.keymap.set('n', '<leader>hn', function()
-  require('harpoon.ui').nav_file(3)
-end, { silent = true, desc = '[H]arpoon third file' })
-vim.keymap.set('n', '<leader>hs', function()
-  require('harpoon.ui').nav_file(4)
-end, { silent = true, desc = '[H]arpoon fourth file' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
