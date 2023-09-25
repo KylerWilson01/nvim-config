@@ -38,15 +38,19 @@ end
 
 local languages = {
   typescriptreact = {
-    require('efmls-configs.linters.eslint_d'),
+    require('efmls-configs.linters.eslint'),
     require('efmls-configs.formatters.prettier'),
   },
   typescript = {
-    require('efmls-configs.linters.eslint_d'),
+    require('efmls-configs.linters.eslint'),
     require('efmls-configs.formatters.prettier'),
   },
   lua = {
     require('efmls-configs.formatters.stylua'),
+  },
+  c_sharp = {
+    require('efmls-configs.linters.mcs'),
+    require('efmls-configs.formatters.dotnet_format'),
   },
 }
 
