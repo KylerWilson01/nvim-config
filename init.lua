@@ -36,7 +36,7 @@ require('lazy').setup({
   'mattn/efm-langserver',
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
-  { 'codota/tabnine-nvim',  build = "./dl_binaries.sh" },
+  { 'codota/tabnine-nvim', build = './dl_binaries.sh' },
 
   {
     -- LSP Configuration & Plugins
@@ -48,7 +48,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -60,23 +60,28 @@ require('lazy').setup({
 
   {
     'creativenull/efmls-configs-nvim',
-    version = 'v1.x.x', -- version is optional, but recommended
     dependencies = { 'neovim/nvim-lspconfig' },
   },
+
+  'lukas-reineke/lsp-format.nvim',
 
   {
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
+    main = 'ibl',
     opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
+      indent = { char = '┊' },
+      whitespace = {
+        remove_blankline_trail = false,
+      },
+      scope = { enabled = false },
     },
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',  opts = {} },
+  { 'numToStr/Comment.nvim', opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -221,7 +226,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -264,16 +269,16 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
-require('tabnine').setup({
+require('tabnine').setup {
   disable_auto_comment = true,
-  accept_keymap = "<C-t>",
-  dismiss_keymap = "<C-]>",
+  accept_keymap = '<C-t>',
+  dismiss_keymap = '<C-]>',
 
   debounce_ms = 800,
 
-  exclude_filetypes = { "TelescopePrompt" },
+  exclude_filetypes = { 'TelescopePrompt' },
   log_file_path = nil, -- absolute path to Tabnine log file
-})
+}
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
