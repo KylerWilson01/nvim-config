@@ -17,9 +17,9 @@ local languages = {
   lua = {
     require 'efmls-configs.formatters.stylua',
   },
-  c_sharp = {
+  cs = {
     require 'efmls-configs.linters.mcs',
-    require 'efmls-configs.formatters.dotnet_format',
+    { formatCommand = 'dotnet csharpier', formatStdin = true },
   },
 }
 
@@ -31,13 +31,10 @@ local efmls_config = {
   },
   init_options = {
     documentFormatting = true,
-    documentRangeFormatting = true,
   },
 }
 
 require('lspconfig').efm.setup(vim.tbl_extend('force', efmls_config, {
   capabilities = capabilities,
-  on_attach = function(client, bufnr)
-    require('lsp-format').on_attach(client, bufnr)
-  end,
+  on_attach = require('lsp-format').on_attach,
 }))
