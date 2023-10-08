@@ -21,6 +21,10 @@ local languages = {
     require 'efmls-configs.linters.mcs',
     { formatCommand = 'dotnet csharpier', formatStdin = true },
   },
+  nix = {
+    require('efmls-configs.linters.statix'),
+    require('efmls-configs.formatters.nixfmt'),
+  },
 }
 
 local efmls_config = {
