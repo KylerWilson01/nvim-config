@@ -30,6 +30,7 @@ require('lazy').setup({
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
+  'vimwiki/vimwiki',
 
   'nvim-lua/popup.nvim',
   'nvim-treesitter/nvim-treesitter-context',
