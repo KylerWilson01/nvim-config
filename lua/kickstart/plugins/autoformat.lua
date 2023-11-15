@@ -22,8 +22,11 @@ local languages = {
     { formatCommand = 'dotnet csharpier', formatStdin = true },
   },
   nix = {
-    require('efmls-configs.linters.statix'),
-    require('efmls-configs.formatters.nixfmt'),
+    require 'efmls-configs.linters.statix',
+    require 'efmls-configs.formatters.nixfmt',
+  },
+  json = {
+    require 'efmls-configs.formatters.prettier',
   },
 }
 

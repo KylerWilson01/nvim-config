@@ -218,6 +218,10 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
+require('treesitter-context').setup {
+  max_lines = 5,
+  multiline_threshold = 3,
+}
 -- Diagnostic keymaps
 vim.keymap.set('n', '<C-p>', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', '<C-n>', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
