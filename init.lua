@@ -276,7 +276,7 @@ end
 
 require('tabnine').setup {
   disable_auto_comment = true,
-  accept_keymap = '<C-t>',
+  accept_keymap = '<C-[>',
   dismiss_keymap = '<C-]>',
 
   debounce_ms = 800,
