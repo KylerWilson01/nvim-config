@@ -30,7 +30,12 @@ require('lazy').setup({
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  'vimwiki/vimwiki',
+  {
+    'vimwiki/vimwiki',
+    config = function()
+      vim.keymap.set('n', '<C-p>', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+    end,
+  },
 
   'nvim-lua/popup.nvim',
   'nvim-treesitter/nvim-treesitter-context',
