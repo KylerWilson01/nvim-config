@@ -25,6 +25,10 @@ local languages = {
     require 'efmls-configs.linters.statix',
     require 'efmls-configs.formatters.nixfmt',
   },
+  go = {
+    require 'efmls-configs.linters.golangci_lint',
+    require 'efmls-configs.formatters.gofmt',
+  },
   json = {
     require 'efmls-configs.formatters.prettier',
   },
