@@ -32,6 +32,11 @@ local languages = {
   json = {
     require 'efmls-configs.formatters.prettier',
   },
+  go = {
+    require('efmls-configs.linters.golint'),
+    require 'efmls-configs.formatters.gofmt',
+    require('efmls-configs.formatters.goimports'),
+  },
 }
 
 local efmls_config = {
