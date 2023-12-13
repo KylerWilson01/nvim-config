@@ -27,6 +27,7 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
+  'dstein64/vim-startuptime',
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
@@ -44,13 +45,12 @@ require('lazy').setup({
   --  The configuration is done below. Search for lspconfig to find it below.
   { 'codota/tabnine-nvim', build = './dl_binaries.sh' },
   {
-    "L3MON4D3/LuaSnip",
+    'L3MON4D3/LuaSnip',
     -- follow latest release.
-    version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+    version = 'v2.*', -- Replace <CurrentMajor> by the latest released major (first number of latest release)
     -- install jsregexp (optional!).
-    build = "make install_jsregexp"
+    build = 'make install_jsregexp',
   },
-
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
@@ -243,7 +243,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(client, bufnr)
+local on_attach = function(_, bufnr)
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
