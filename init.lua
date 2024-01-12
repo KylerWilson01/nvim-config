@@ -27,7 +27,6 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
-  'dstein64/vim-startuptime',
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
@@ -40,10 +39,16 @@ require('lazy').setup({
 
   'nvim-lua/popup.nvim',
   'nvim-treesitter/nvim-treesitter-context',
-  'mattn/efm-langserver',
+  {
+    'nvimtools/none-ls.nvim',
+    event = 'VeryLazy',
+    opts = function()
+      return require 'custom.configs.null-ls'
+    end,
+  },
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
-  { 'codota/tabnine-nvim', build = './dl_binaries.sh' },
+  { 'codota/tabnine-nvim',  build = './dl_binaries.sh' },
   {
     'L3MON4D3/LuaSnip',
     -- follow latest release.
@@ -55,10 +60,6 @@ require('lazy').setup({
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
-      -- Automatically install LSPs to stdpath for neovim
-      { 'williamboman/mason.nvim', config = true },
-      'williamboman/mason-lspconfig.nvim',
-
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
@@ -70,11 +71,6 @@ require('lazy').setup({
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
-
-  {
-    'creativenull/efmls-configs-nvim',
-    dependencies = { 'neovim/nvim-lspconfig' },
-  },
 
   'lukas-reineke/lsp-format.nvim',
 
@@ -94,7 +90,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',  opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -107,6 +103,19 @@ require('lazy').setup({
   },
   'nvim-treesitter/playground',
   'christoomey/vim-tmux-navigator',
+  {
+    'windwp/nvim-ts-autotag',
+    ft = {
+      'javascript',
+      'javascriptreact',
+      'typescript',
+      'typescriptreact',
+      'svelte',
+    },
+    config = function()
+      require('nvim-ts-autotag').setup()
+    end,
+  },
 
   require 'kickstart.plugins.debug',
   { import = 'custom.plugins' },
@@ -169,7 +178,7 @@ require('nvim-treesitter.configs').setup {
   sync_install = false,
   ignore_install = {},
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'tsx', 'typescript', 'vimdoc', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'tsx', 'typescript', 'vimdoc', 'vim', 'svelte', 'javascript', 'nix' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = true,
@@ -316,8 +325,9 @@ local servers = {
   },
   pyright = {},
   tsserver = {},
+  svelte = {},
   cssls = {},
-
+  omnisharp = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -332,32 +342,16 @@ require('neodev').setup()
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+local lspconfig = require 'lspconfig'
 
--- Ensure the servers above are installed
-local mason_lspconfig = require 'mason-lspconfig'
-
-mason_lspconfig.setup {
-  ensure_installed = vim.tbl_keys(servers),
-}
-
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-      filetypes = (servers[server_name] or {}).filetypes,
-    }
-  end,
-}
-
-require('lspconfig').omnisharp.setup {
-  capabilities = capabilities,
-  on_attach = on_attach,
-}
-
--- Setup efm
-require 'kickstart.plugins.autoformat'
+for name, server in pairs(servers) do
+  lspconfig[name].setup {
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = server,
+    filetypes = (server or {}).filetypes,
+  }
+end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
