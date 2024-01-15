@@ -48,7 +48,7 @@ require('lazy').setup({
   },
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
-  { 'codota/tabnine-nvim',  build = './dl_binaries.sh' },
+  { 'codota/tabnine-nvim',  build = './dl_binaries.sh', event = 'VeryLazy' },
   {
     'L3MON4D3/LuaSnip',
     -- follow latest release.
@@ -60,9 +60,13 @@ require('lazy').setup({
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
+      -- Automatically install LSPs to stdpath for neovim
+      { 'williamboman/mason.nvim', config = true },
+      'williamboman/mason-lspconfig.nvim',
+
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -301,6 +305,10 @@ require('tabnine').setup {
   log_file_path = nil, -- absolute path to Tabnine log file
 }
 
+require('mason').setup()
+require('mason-lspconfig').setup()
+
+
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 --
@@ -341,8 +349,14 @@ require('neodev').setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 local lspconfig = require 'lspconfig'
+local mason_lspconfig = require 'mason-lspconfig'
+
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+mason_lspconfig.setup {
+  ensure_installed = vim.tbl_keys(servers),
+}
 
 for name, server in pairs(servers) do
   lspconfig[name].setup {
