@@ -46,15 +46,34 @@ require('lazy').setup({
       return require 'custom.configs.null-ls'
     end,
   },
+  {
+    'jay-babu/mason-null-ls.nvim',
+    event = { 'BufReadPre', 'BufNewFile' },
+    dependencies = {
+      'williamboman/mason.nvim',
+      'nvimtools/none-ls.nvim',
+    },
+    config = function()
+      require 'custom.configs.null-ls'
+      require('mason-null-ls').setup {
+        automatic_installation = true,
+        ensure_installed = {},
+      }
+    end,
+  },
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
-  { 'codota/tabnine-nvim',  build = './dl_binaries.sh', event = 'VeryLazy' },
+  { 'codota/tabnine-nvim', build = './dl_binaries.sh', event = 'VeryLazy' },
   {
     'L3MON4D3/LuaSnip',
     -- follow latest release.
     version = 'v2.*', -- Replace <CurrentMajor> by the latest released major (first number of latest release)
     -- install jsregexp (optional!).
     build = 'make install_jsregexp',
+  },
+  {
+    'folke/trouble.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
   {
     -- LSP Configuration & Plugins
@@ -66,7 +85,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -94,7 +113,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',  opts = {} },
+  { 'numToStr/Comment.nvim', opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -307,7 +326,6 @@ require('tabnine').setup {
 
 require('mason').setup()
 require('mason-lspconfig').setup()
-
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
