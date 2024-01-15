@@ -74,6 +74,26 @@ require('lazy').setup({
   {
     'folke/trouble.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      vim.keymap.set('n', '<leader>xx', function()
+        require('trouble').toggle()
+      end, { desc = 'Trouble Toggle' }),
+      vim.keymap.set('n', '<leader>xw', function()
+        require('trouble').toggle 'workspace_diagnostics'
+      end, { desc = 'Trouble Toggle [W]orkspace Diagnostics' }),
+      vim.keymap.set('n', '<leader>xd', function()
+        require('trouble').toggle 'document_diagnostics'
+      end, { desc = 'Trouble Toggle [D]ocument Diagnostics' }),
+      vim.keymap.set('n', '<leader>xq', function()
+        require('trouble').toggle 'quickfix'
+      end, { desc = 'Trouble Toggle [Q]uickfix' }),
+      vim.keymap.set('n', '<leader>xl', function()
+        require('trouble').toggle 'loclist'
+      end, { desc = 'Trouble Toggle [L]oclist' }),
+      vim.keymap.set('n', 'gR', function()
+        require('trouble').toggle 'lsp_references'
+      end, { desc = 'Trouble Toggle Lsp References' }),
+    },
   },
   {
     -- LSP Configuration & Plugins
@@ -313,17 +333,6 @@ local on_attach = function(_, bufnr)
   end, '[W]orkspace [L]ist Folders')
 end
 
-require('tabnine').setup {
-  disable_auto_comment = true,
-  accept_keymap = '<C-[>',
-  dismiss_keymap = '<C-]>',
-
-  debounce_ms = 800,
-
-  exclude_filetypes = { 'TelescopePrompt' },
-  log_file_path = nil, -- absolute path to Tabnine log file
-}
-
 require('mason').setup()
 require('mason-lspconfig').setup()
 
@@ -389,3 +398,14 @@ end
 -- vim: ts=2 sts=2 sw=2 et
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+require('tabnine').setup {
+  disable_auto_comment = true,
+  accept_keymap = '<C-[>',
+  dismiss_keymap = '<C-]>',
+
+  debounce_ms = 800,
+
+  exclude_filetypes = { 'TelescopePrompt' },
+  log_file_path = nil, -- absolute path to Tabnine log file
+}
