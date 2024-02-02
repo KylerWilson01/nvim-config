@@ -8,10 +8,8 @@ local opts = vim.o
 opts.hlsearch = false
 
 -- Make line numbers default
-vim.wo.number = true
-
--- Enable mouse mode
-opts.mouse = 'a'
+vim.opt.nu = true
+vim.wo.relativenumber = true
 
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
