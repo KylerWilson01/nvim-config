@@ -41,6 +41,9 @@ require('lazy').setup({
   'nvim-treesitter/nvim-treesitter-context',
   {
     'nvimtools/none-ls.nvim',
+    dependencies = {
+      'nvimtools/none-ls-extras.nvim',
+    },
     event = 'VeryLazy',
     opts = function()
       return require 'custom.configs.null-ls'
@@ -58,6 +61,13 @@ require('lazy').setup({
       require('mason-null-ls').setup {
         automatic_installation = true,
         ensure_installed = {},
+        ignore_methods = {
+          hover = false,
+          completion = false,
+          formatting = false,
+          diagnostics = false,
+          code_actions = false,
+        },
       }
     end,
   },
