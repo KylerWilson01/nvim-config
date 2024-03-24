@@ -10,12 +10,7 @@ local opts = {
     null_ls.builtins.formatting.prettierd,
 
     null_ls.builtins.formatting.black,
-    null_ls.builtins.diagnostics.mypy.with {
-      extra_args = function()
-        local virtual = os.getenv 'VIRTUAL_ENV' or '/usr'
-        return { '--python-executable', virtual .. '/bin/python3' }
-      end,
-    },
+    require 'none-ls.diagnostics.flake8',
     require 'none-ls.diagnostics.ruff',
 
     null_ls.builtins.diagnostics.revive,
