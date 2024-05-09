@@ -47,7 +47,16 @@ require('lazy').setup({
       vim.cmd [[silent! GoInstallDeps]]
     end,
   },
-
+  {
+    'ThePrimeagen/refactoring.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('refactoring').setup()
+    end,
+  },
   'nvim-lua/popup.nvim',
   'nvim-treesitter/nvim-treesitter-context',
   {
