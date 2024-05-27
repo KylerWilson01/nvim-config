@@ -77,6 +77,23 @@ return {
       },
     }
 
+    dap.adapters.coreclr = {
+      type = 'executable',
+      command = '/usr/local/bin/netcoredbg/netcoredbg',
+      args = { '--interpreter=vscode' },
+    }
+
+    dap.configurations.cs = {
+      {
+        type = 'coreclr',
+        name = 'launch - netcoredbg',
+        request = 'launch',
+        program = function()
+          return vim.fn.input('Path to dll: ', vim.fn.getcwd() .. '/bin/Debug/', 'file')
+        end,
+      },
+    }
+
     -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
     vim.keymap.set('n', '<F7>', dapui.toggle, { desc = 'Debug: See last session result.' })
 
