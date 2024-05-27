@@ -243,6 +243,7 @@ vim.keymap.set('n', '<leader>tsh', require('telescope.builtin').help_tags, { des
 vim.keymap.set('n', '<leader>tsw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>tsg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>tsd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>tst', require('telescope.builtin').treesitter, { desc = '[S]earch [T]reesitter' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
